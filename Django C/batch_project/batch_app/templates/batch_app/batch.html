@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Control</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            font-size: 20px;
+        }
+        .btn-custom {
+            margin-right: 15px;
+        }
+        .param-display {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .timer-display {
+            font-size: 28px;
+            color: #28a745;
+        }
+        .state-display {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff8c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center">
+                Batch Control System
+            </div>
+            <div class="card-body">
+                <form method="post" class="mb-4">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="batchName">Batch Name</label>
+                        {{ form.batch_name }}
+                    </div>
+                    <div class="form-group">
+                        <label for="batchId">Batch ID</label>
+                        {{ form.batch_id }}
+                    </div>
+                    <div class="form-group">
+                        <label for="loginName">Login Name</label>
+                        {{ form.login_name }}
+                    </div>
+                    <div class="text-center">
+                        <button type="button" id="start-button" class="btn btn-success btn-custom">Start</button>
+                        <button type="submit" id="stop-button" class="btn btn-danger">Stop</button>
+                    </div>
+                </form>
+
+                <!-- Displaying the parameters -->
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <h3>Parameter 1</h3>
+                        <p class="param-display" id="param1">0</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h3>Parameter 2</h3>
+                        <p class="param-display" id="param2">0</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h3>Timer</h3>
+                        <p class="timer-display" id="timer">0 sec</p>
+                    </div>
+                </div>
+
+                <!-- Displaying the state -->
+                <div class="row mt-4">
+                    <div class="col-md-12 text-center">
+                        <h3>State</h3>
+                        <p class="state-display" id="state">Idle</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for dynamic parameter updates -->
+    <script>
+        let timer = 0;
+        let interval = null;
+
+        $('#start-button').click(function () {
+            if (!interval) {
+                interval = setInterval(updateParameters, 1000);
+            }
+        });
+
+        $('#stop-button').click(function () {
+            clearInterval(interval);
+            interval = null;
+        });
+
+        function updateParameters() {
+            if (timer >= 200) {
+                clearInterval(interval);
+                interval = null;
+                return;
+            }
+
+            timer++;
+            $('#timer').text(timer + ' sec');
+            
+            // Update parameters
+            $.getJSON('/get_random_values/', function (data) {
+                $('#param1').text(data.param1);
+                $('#param2').text(data.param2);
+            });
+
+            // Update state based on timer
+            let state = 'Idle';
+            if (timer >= 1 && timer <= 10) {
+                state = 'Standby';
+            } else if (timer >= 11 && timer <= 50) {
+                state = 'C/P';
+            } else if (timer >= 51 && timer <= 100) {
+                state = 'Production';
+            } else if (timer >= 101 && timer <= 150) {
+                state = 'Discharge';
+            } else if (timer >= 151 && timer <= 200) {
+                state = 'Stopping';
+            }
+            $('#state').text(state);
+
+            // Store the data (send to server)
+            storeData();
+        }
+
+        function storeData() {
+            $.post("{% url 'store_data' %}", {
+                param1: $('#param1').text(),
+                param2: $('#param2').text(),
+                timer: $('#timer').text(),
+                state: $('#state').text(),
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            });
+        }
+    </script>
+
+    <!-- Bootstrap JS (optional for dropdowns, modals, etc.) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
