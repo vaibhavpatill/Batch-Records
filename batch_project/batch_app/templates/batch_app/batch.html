@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronics Batch Control System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #06b6d4;
+            --dark-color: #1f2937;
+            --light-color: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .system-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .system-title {
+            color: var(--dark-color);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .system-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-section {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            outline: none;
+        }
+        
+        .btn-control {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            border: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 10px;
+            min-width: 140px;
+            justify-content: center;
+        }
+        
+        .btn-start {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+        
+        .btn-stop {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-stop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+            color: white;
+        }
+        
+        .btn-clear {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-clear:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+            color: white;
+        }
+        
+        .btn-report {
+            background: linear-gradient(135deg, var(--info-color), #0891b2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        
+        .btn-report:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+            color: white;
+        }
+        
+        .monitoring-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .monitor-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .monitor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+        }
+        
+        .monitor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .monitor-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .monitor-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+        
+        .monitor-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-family: 'Inter', monospace;
+        }
+        
+        .param1-value { color: var(--primary-color); }
+        .param2-value { color: var(--info-color); }
+        .timer-value { color: var(--success-color); }
+        
+        .state-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .state-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--warning-color), var(--danger-color));
+        }
+        
+        .state-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .state-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: inline-block;
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+        
+        .state-idle { background: #f1f5f9; color: #64748b; }
+        .state-standby { background: #fef3c7; color: #d97706; }
+        .state-cp { background: #dbeafe; color: #2563eb; }
+        .state-production { background: #d1fae5; color: #059669; }
+        .state-discharge { background: #fce7f3; color: #be185d; }
+        .state-stopping { background: #fee2e2; color: #dc2626; }
+        
+        .progress-bar-container {
+            margin-top: 20px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), var(--info-color));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .running .monitor-value {
+            animation: pulse 2s infinite;
+        }
+        
+        @media (max-width: 768px) {
+            .system-title {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .monitoring-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-control {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- System Header -->
+        <div class="system-header">
+            <h1 class="system-title">
+                <i class="fas fa-microchip"></i>
+                Electronics Batch Control System
+            </h1>
+            <p class="system-subtitle">Advanced Process Monitoring & Control Dashboard</p>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="form-section">
+                <h4 class="mb-4">
+                    <i class="fas fa-cogs"></i>
+                    Batch Configuration
+                </h4>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Batch Name
+                                </label>
+                                {{ form.batch_name }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-barcode"></i>
+                                    Batch ID
+                                </label>
+                                {{ form.batch_id }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    Operator Name
+                                </label>
+                                {{ form.login_name }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button type="button" id="start-button" class="btn btn-control btn-start">
+                            <i class="fas fa-play"></i>
+                            Start Process
+                        </button>
+                        <button type="submit" id="stop-button" class="btn btn-control btn-stop">
+                            <i class="fas fa-stop"></i>
+                            Stop Process
+                        </button>
+                        <button type="button" id="show-data-button" class="btn btn-control" style="background: #6c757d; color: white;">
+                            <i class="fas fa-table"></i>
+                            Show Data
+                        </button>
+                        <button type="button" id="clear-button" class="btn btn-control btn-clear">
+                            <i class="fas fa-eraser"></i>
+                            Clear Data
+                        </button>
+                        <button type="button" id="ssrs-report-button" class="btn btn-control btn-report">
+                            <i class="fas fa-file-pdf"></i>
+                            SSRS Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Process Monitoring -->
+            <div class="monitoring-grid">
+                <div class="monitor-card">
+                    <div class="monitor-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="monitor-title">Completion (%)</div>
+                    <div class="monitor-value param1-value" id="param1">0</div>
+                    <small class="text-muted">Process completion</small>
+                </div>
+                
+                <div class="monitor-card">
+                    <div class="monitor-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="monitor-title">Pressure (Bar)</div>
+                    <div class="monitor-value param2-value" id="param2">0</div>
+                    <small class="text-muted">System pressure</small>
+                </div>
+                
+                <div class="monitor-card">
+                    <div class="monitor-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="monitor-title">Process Timer</div>
+                    <div class="monitor-value timer-value" id="timer">0 sec</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Process State -->
+            <div class="state-card">
+                <div class="state-title">
+                    <i class="fas fa-info-circle"></i>
+                    Process State
+                </div>
+                <div class="state-value state-idle" id="state">Idle</div>
+                <div class="mt-3">
+                    <small class="text-muted">Current process phase</small>
+                </div>
+            </div>
+
+            <!-- Batch Data Table -->
+            <div class="control-panel" id="data-table-section" style="display: none;">
+                <h4 class="mb-4">
+                    <i class="fas fa-table"></i>
+                    Batch Process Data
+                </h4>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Timer (sec)</th>
+                                <th>Completion (%)</th>
+                                <th>Pressure (Bar)</th>
+                                <th>State</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-body">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <button type="button" id="hide-data-button" class="btn btn-secondary">
+                        <i class="fas fa-eye-slash"></i>
+                        Hide Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for dynamic parameter updates -->
+    <script>
+        let timer = 0;
+        let interval = null;
+        let isRunning = false;
+
+        $('#start-button').click(function () {
+            // Validate form before starting
+            const batchName = $('input[name="batch_name"]').val();
+            const batchId = $('input[name="batch_id"]').val();
+            const loginName = $('input[name="login_name"]').val();
+            
+            if (!batchName || !batchId || !loginName) {
+                alert('Please fill in all required fields before starting the process.');
+                return;
+            }
+            
+            if (!interval && !isRunning) {
+                isRunning = true;
+                $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Running...');
+                $('.monitoring-grid').addClass('running');
+                interval = setInterval(updateParameters, 1000);
+            }
+        });
+
+        $('#stop-button').click(function () {
+            clearInterval(interval);
+            interval = null;
+            isRunning = false;
+            const currentBatchId = $('input[name="batch_id"]').val();
+            timer = 0;
+            $('#start-button').prop('disabled', false).html('<i class="fas fa-play"></i> Start Process');
+            $('.monitoring-grid').removeClass('running');
+            resetDisplay();
+            if (currentBatchId) {
+                showBatchData(currentBatchId);
+            }
+        });
+
+        function updateParameters() {
+            if (timer >= 200) {
+                clearInterval(interval);
+                interval = null;
+                isRunning = false;
+                const currentBatchId = $('input[name="batch_id"]').val();
+                $('#start-button').prop('disabled', false).html('<i class="fas fa-play"></i> Start Process');
+                $('.monitoring-grid').removeClass('running');
+                if (currentBatchId) {
+                    showBatchData(currentBatchId);
+                }
+                return;
+            }
+
+            timer++;
+            $('#timer').text(timer + ' sec');
+            
+            // Update progress bar
+            const progress = (timer / 200) * 100;
+            $('#progress-bar').css('width', progress + '%');
+            
+            // Update parameters
+            $.getJSON('/get_random_values/', function (data) {
+                $('#param1').text(data.param1);
+                $('#param2').text(data.param2);
+            });
+
+            // Update state based on timer
+            let state = 'Idle';
+            let stateClass = 'state-idle';
+            
+            if (timer >= 1 && timer <= 10) {
+                state = 'Standby';
+                stateClass = 'state-standby';
+            } else if (timer >= 11 && timer <= 50) {
+                state = 'C/P';
+                stateClass = 'state-cp';
+            } else if (timer >= 51 && timer <= 100) {
+                state = 'Production';
+                stateClass = 'state-production';
+            } else if (timer >= 101 && timer <= 150) {
+                state = 'Discharge';
+                stateClass = 'state-discharge';
+            } else if (timer >= 151 && timer <= 200) {
+                state = 'Stopping';
+                stateClass = 'state-stopping';
+            }
+            
+            $('#state').text(state).removeClass().addClass('state-value ' + stateClass);
+
+            // Store the data (send to server)
+            storeData();
+        }
+
+        function resetDisplay() {
+            $('#param1').text('0');
+            $('#param2').text('0');
+            $('#timer').text('0 sec');
+            $('#state').text('Idle').removeClass().addClass('state-value state-idle');
+            $('#progress-bar').css('width', '0%');
+        }
+
+        function storeData() {
+            const data = {
+                batch_name: $('input[name="batch_name"]').val(),
+                batch_id: $('input[name="batch_id"]').val(),
+                login_name: $('input[name="login_name"]').val(),
+                param1: $('#param1').text(),
+                param2: $('#param2').text(),
+                timer: $('#timer').text(),
+                state: $('#state').text(),
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            };
+            console.log('Storing data:', data);
+            
+            $.post("{% url 'store_data' %}", data)
+            .done(function(response) {
+                console.log('Data stored successfully:', response);
+            })
+            .fail(function(xhr, status, error) {
+                console.error('Error storing data:', error);
+            });
+        }
+
+        function showBatchData(batchId) {
+            console.log('Fetching data for batch ID:', batchId);
+            $.get('/get_batch_data/', { batch_id: batchId })
+            .done(function(response) {
+                console.log('Response received:', response);
+                const tableBody = $('#data-table-body');
+                tableBody.empty();
+                
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(function(record) {
+                        const row = `
+                            <tr>
+                                <td>${record.timer}</td>
+                                <td>${record.param1}</td>
+                                <td>${record.param2}</td>
+                                <td><span class="badge bg-primary">${record.state}</span></td>
+                                <td>${record.timestamp}</td>
+                            </tr>
+                        `;
+                        tableBody.append(row);
+                    });
+                } else {
+                    tableBody.append('<tr><td colspan="5" class="text-center">No data found for this batch</td></tr>');
+                }
+                
+                $('#data-table-section').show();
+                $('html, body').animate({
+                    scrollTop: $('#data-table-section').offset().top
+                }, 1000);
+            })
+            .fail(function(xhr, status, error) {
+                console.error('Error fetching data:', error);
+                alert('Error loading batch data: ' + error);
+            });
+        }
+
+        $('#hide-data-button').click(function() {
+            $('#data-table-section').hide();
+        });
+
+        $('#show-data-button').click(function() {
+            const batchId = $('input[name="batch_id"]').val();
+            if (batchId) {
+                showBatchData(batchId);
+            } else {
+                alert('Please enter a Batch ID first');
+            }
+        });
+
+        // Clear button functionality
+        $('#clear-button').click(function() {
+            if (confirm('Are you sure you want to clear all user data?')) {
+                $('input[name="batch_name"]').val('');
+                $('input[name="batch_id"]').val('');
+                $('input[name="login_name"]').val('');
+                $('#data-table-section').hide();
+                resetDisplay();
+            }
+        });
+
+        // SSRS Report button functionality
+        $('#ssrs-report-button').click(function() {
+            const batchId = $('input[name="batch_id"]').val();
+            if (!batchId) {
+                alert('Please enter a Batch ID to generate report');
+                return;
+            }
+            
+            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Generating...');
+            
+            $.post('{% url "generate_ssrs_report" %}', {
+                batch_id: batchId,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            })
+            .done(function(response) {
+                if (response.status === 'success') {
+                    window.open(response.report_url, '_blank');
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            })
+            .fail(function() {
+                alert('Failed to generate report. Please try again.');
+            })
+            .always(function() {
+                $('#ssrs-report-button').prop('disabled', false).html('<i class="fas fa-file-pdf"></i> SSRS Report');
+            });
+        });
+
+        // Add form validation
+        $('form').on('submit', function(e) {
+            const batchName = $('input[name="batch_name"]').val();
+            const batchId = $('input[name="batch_id"]').val();
+            const loginName = $('input[name="login_name"]').val();
+            
+            if (!batchName || !batchId || !loginName) {
+                e.preventDefault();
+                alert('Please fill in all required fields before starting the process.');
+                return false;
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
