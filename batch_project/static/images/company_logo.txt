@@ -1,0 +1,9 @@
+COMPANY LOGO PLACEHOLDER
+
+To add your company logo:
+1. Replace this file with your logo image
+2. Name it: company_logo.png
+3. Recommended size: 150x80 pixels
+4. Supported formats: PNG, JPG, GIF
+
+The report will display your logo in the top-left corner.

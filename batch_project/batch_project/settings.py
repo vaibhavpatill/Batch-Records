@@ -124,8 +124,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # SSRS Configuration
-SSRS_URL = 'http://localhost:8080/ReportServer'  # Use port 8080 if configured
-SSRS_REPORT_PATH = '/BatchReports/BatchProcessReport_Final'
-SSRS_USERNAME = 'Administrator'  # Your Windows username
-SSRS_PASSWORD = ''  # Leave empty for Windows Authentication
+SSRS_URL = 'http://localhost/ReportServer'
+SSRS_REPORT_PATH = '/BatchReports/BatchProcessReport_2022'
+SSRS_USERNAME = 'Administrator'
+SSRS_PASSWORD = ''
 

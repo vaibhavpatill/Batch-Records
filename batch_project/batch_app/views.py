@@ -93,12 +93,11 @@ def generate_ssrs_report(request):
                     return JsonResponse({'status': 'error', 'message': 'No data found for this batch ID'})
                 
                 # SSRS Report configuration
-                ssrs_url = getattr(settings, 'SSRS_URL', 'http://localhost:8080/ReportServer')
-                report_path = getattr(settings, 'SSRS_REPORT_PATH', '/BatchProcessReport_Final')
+                ssrs_url = getattr(settings, 'SSRS_URL', 'http://localhost/ReportServer')
+                report_path = getattr(settings, 'SSRS_REPORT_PATH', '/BatchReports/BatchProcessReport_2022')
                 
-                # Build SSRS report URL with proper format
-                # SSRS URL format: http://server/reportserver?/folder/reportname&rs:Command=Render&rs:Format=PDF
-                report_url = f"{ssrs_url}?{report_path}&rs:Command=Render&rs:Format=PDF"
+                # Build SSRS report URL for direct report execution
+                report_url = f"http://localhost:8080/ReportServer/Pages/ReportViewer.aspx?/BatchReports/BatchProcessReport_2022&BatchNumber={batch_id}"
                 
                 # Return URL for client-side redirect (browser will handle authentication)
                 return JsonResponse({
