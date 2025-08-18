@@ -2,35 +2,34 @@ from django.shortcuts import render
 from .forms import BatchForm
 from django.http import JsonResponse
 import random
+import pyodbc
+from django.conf import settings
 
 def batch_view(request):
     if request.method == 'POST':
         form = BatchForm(request.POST)
         if form.is_valid():
-            # Process form data here
             batch_name = form.cleaned_data['batch_name']
             batch_id = form.cleaned_data['batch_id']
             login_name = form.cleaned_data['login_name']
             return render(request, 'batch_app/batch.html', {'form': form})
     else:
         form = BatchForm()
-
     return render(request, 'batch_app/batch.html', {'form': form})
 
-from django.http import JsonResponse
 from .models import BatchData
 
 def store_data(request):
     if request.method == 'POST':
         param1 = request.POST.get('param1')
         param2 = request.POST.get('param2')
-        timer = request.POST.get('timer').split()[0]  # Extract the timer value (in seconds)
+        timer = request.POST.get('timer').split()[0]
         state = request.POST.get('state')
         batch_name = request.POST.get('batch_name', 'Unknown')
         batch_id = request.POST.get('batch_id', 'Unknown')
         login_name = request.POST.get('login_name', 'Unknown')
 
-        # Save data to the database
+        # Save to SQLite (Django)
         BatchData.objects.create(
             batch_name=batch_name,
             batch_id=batch_id,
@@ -40,12 +39,25 @@ def store_data(request):
             timer=timer, 
             state=state
         )
+        
+        # Also save to SQL Server for SSRS
+        try:
+            conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost\\SQLEXPRESS;DATABASE=BatchDB;Trusted_Connection=yes;')
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO batch_data (batch_number, product_name, temperature, pressure, flow_rate, ph_level, timer_value, state)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (batch_id, batch_name, float(param1), float(param2), 15.2, 7.1, int(timer), state))
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            print(f"SQL Server insert error: {e}")
+        
         return JsonResponse({'status': 'success'})
 
 def get_random_values(request):
-    import random
-    param1 = random.randint(0, 100)
-    param2 = round(random.uniform(0.00, 4.00), 2)
+    param1 = random.randint(50, 100)
+    param2 = round(random.uniform(1.50, 4.00), 2)
     return JsonResponse({'param1': param1, 'param2': param2})
 
 def get_batch_data(request):
@@ -70,27 +82,33 @@ def generate_ssrs_report(request):
         batch_id = request.POST.get('batch_id')
         if batch_id:
             try:
-                from django.http import HttpResponse
-                import csv
-                from io import StringIO
-                
+                import requests
+                from requests.auth import HTTPBasicAuth
                 from django.conf import settings
+                import urllib.parse
                 
-                # SSRS Report URL - works with MSSQL backend
-                ssrs_url = getattr(settings, 'SSRS_URL', 'http://localhost/ReportServer')
-                report_path = getattr(settings, 'SSRS_REPORT_PATH', '/BatchReports/BatchProcessReport')
+                # Check if batch data exists
+                data = BatchData.objects.filter(batch_id=batch_id)
+                if not data.exists():
+                    return JsonResponse({'status': 'error', 'message': 'No data found for this batch ID'})
                 
-                # Generate report URL
-                report_url = f"{ssrs_url}?{report_path}&BatchID={batch_id}&rs:Format=PDF"
+                # SSRS Report configuration
+                ssrs_url = getattr(settings, 'SSRS_URL', 'http://localhost:8080/ReportServer')
+                report_path = getattr(settings, 'SSRS_REPORT_PATH', '/BatchProcessReport_Final')
                 
+                # Build SSRS report URL with proper format
+                # SSRS URL format: http://server/reportserver?/folder/reportname&rs:Command=Render&rs:Format=PDF
+                report_url = f"{ssrs_url}?{report_path}&rs:Command=Render&rs:Format=PDF"
+                
+                # Return URL for client-side redirect (browser will handle authentication)
                 return JsonResponse({
                     'status': 'success',
-                    'message': 'Report generated successfully',
+                    'message': 'Opening SSRS report...',
                     'report_url': report_url
                 })
                 
             except Exception as e:
-                return JsonResponse({'status': 'error', 'message': str(e)})
+                return JsonResponse({'status': 'error', 'message': f'Error generating report: {str(e)}'})
         else:
             return JsonResponse({'status': 'error', 'message': 'Batch ID is required'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})

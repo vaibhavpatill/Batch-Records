@@ -76,12 +76,8 @@ WSGI_APPLICATION = 'batch_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'batch_info',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -127,4 +123,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# SSRS Configuration
+SSRS_URL = 'http://localhost:8080/ReportServer'  # Use port 8080 if configured
+SSRS_REPORT_PATH = '/BatchReports/BatchProcessReport_Final'
+SSRS_USERNAME = 'Administrator'  # Your Windows username
+SSRS_PASSWORD = ''  # Leave empty for Windows Authentication
 

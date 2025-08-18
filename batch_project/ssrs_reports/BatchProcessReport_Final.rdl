@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="BatchDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=localhost\SQLEXPRESS;Initial Catalog=BatchDB</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="BatchDataSet">
+      <Query>
+        <DataSourceName>BatchDataSource</DataSourceName>
+        <CommandText>SELECT TOP 1 batch_number, product_name, temperature, pressure FROM batch_data ORDER BY id DESC</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="batch_number">
+          <DataField>batch_number</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="product_name">
+          <DataField>product_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="temperature">
+          <DataField>temperature</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="pressure">
+          <DataField>pressure</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="Title">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Batch Process Report</Value>
+                    <Style>
+                      <FontSize>16pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Title</rd:DefaultName>
+            <Top>0.25in</Top>
+            <Left>1in</Left>
+            <Height>0.5in</Height>
+            <Width>6in</Width>
+          </Textbox>
+          <Textbox Name="BatchNumber">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Batch Number: " &amp; First(Fields!batch_number.Value, "BatchDataSet")</Value>
+                  </TextRun>
+                </TextRuns>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>BatchNumber</rd:DefaultName>
+            <Top>1in</Top>
+            <Left>1in</Left>
+            <Height>0.25in</Height>
+            <Width>6in</Width>
+          </Textbox>
+          <Textbox Name="ProductName">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Product Name: " &amp; First(Fields!product_name.Value, "BatchDataSet")</Value>
+                  </TextRun>
+                </TextRuns>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>ProductName</rd:DefaultName>
+            <Top>1.3in</Top>
+            <Left>1in</Left>
+            <Height>0.25in</Height>
+            <Width>6in</Width>
+          </Textbox>
+          <Textbox Name="Temperature">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Temperature: " &amp; First(Fields!temperature.Value, "BatchDataSet") &amp; " °C"</Value>
+                  </TextRun>
+                </TextRuns>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Temperature</rd:DefaultName>
+            <Top>1.6in</Top>
+            <Left>1in</Left>
+            <Height>0.25in</Height>
+            <Width>6in</Width>
+          </Textbox>
+          <Textbox Name="Pressure">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Pressure: " &amp; First(Fields!pressure.Value, "BatchDataSet") &amp; " bar"</Value>
+                  </TextRun>
+                </TextRuns>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Pressure</rd:DefaultName>
+            <Top>1.9in</Top>
+            <Left>1in</Left>
+            <Height>0.25in</Height>
+            <Width>6in</Width>
+          </Textbox>
+        </ReportItems>
+        <Height>3in</Height>
+      </Body>
+      <Width>8in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>c1d2e3f4-g5h6-7890-abcd-ef1234567890</rd:ReportID>
+</Report>
