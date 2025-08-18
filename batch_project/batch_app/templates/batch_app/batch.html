@@ -230,6 +230,8 @@
             color: white;
         }
         
+
+        
         .monitoring-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -455,9 +457,15 @@
                         <i class="fas fa-cogs me-2" style="color: var(--primary-color);"></i>
                         Batch Configuration
                     </h4>
-                    <div class="badge bg-primary px-3 py-2">
-                        <i class="fas fa-shield-alt me-1"></i>
-                        Secure Mode
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" id="fill-sample-button" class="btn btn-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem;">
+                            <i class="fas fa-magic me-1"></i>
+                            Sample Data
+                        </button>
+                        <div class="badge bg-primary px-3 py-2">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Secure Mode
+                        </div>
                     </div>
                 </div>
                 <form method="post">
@@ -492,7 +500,7 @@
                         </div>
                     </div>
                     
-                    <div class="text-center mt-4">
+                    <div class="d-flex justify-content-center gap-3 mt-4">
                         <button type="button" id="start-button" class="btn btn-control btn-start">
                             <i class="fas fa-play"></i>
                             Start Process
@@ -501,17 +509,9 @@
                             <i class="fas fa-stop"></i>
                             Stop Process
                         </button>
-                        <button type="button" id="show-data-button" class="btn btn-control" style="background: linear-gradient(135deg, #6c757d, #495057); color: white; box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);">
-                            <i class="fas fa-table"></i>
-                            Show Data
-                        </button>
                         <button type="button" id="clear-button" class="btn btn-control btn-clear">
                             <i class="fas fa-eraser"></i>
                             Clear Data
-                        </button>
-                        <button type="button" id="ssrs-report-button" class="btn btn-control btn-report" disabled>
-                            <i class="fas fa-file-pdf"></i>
-                            SSRS Report
                         </button>
                     </div>
                 </form>
@@ -579,9 +579,15 @@
                         <i class="fas fa-table me-2" style="color: var(--info-color);"></i>
                         Batch Process Data
                     </h4>
-                    <div class="badge bg-info px-3 py-2">
-                        <i class="fas fa-database me-1"></i>
-                        Live Data
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" id="ssrs-report-button" class="btn btn-sm btn-outline-info" disabled>
+                            <i class="fas fa-file-pdf me-1"></i>
+                            Report
+                        </button>
+                        <div class="badge bg-info px-3 py-2">
+                            <i class="fas fa-database me-1"></i>
+                            Live Data
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -600,9 +606,13 @@
                     </table>
                 </div>
                 <div class="text-center mt-3">
-                    <button type="button" id="hide-data-button" class="btn btn-secondary">
-                        <i class="fas fa-eye-slash"></i>
+                    <button type="button" id="hide-data-button" class="btn btn-outline-secondary">
+                        <i class="fas fa-eye-slash me-1"></i>
                         Hide Data
+                    </button>
+                    <button type="button" id="show-data-button" class="btn btn-outline-primary ms-2">
+                        <i class="fas fa-table me-1"></i>
+                        Show Data
                     </button>
                 </div>
             </div>
@@ -918,6 +928,25 @@
             })
             .always(function() {
                 $('#ssrs-report-button').prop('disabled', false).html('<i class="fas fa-file-pdf"></i> SSRS Report');
+            });
+        });
+
+        // Fill Sample Data button functionality
+        $('#fill-sample-button').click(function() {
+            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Loading...');
+            
+            $.get('{% url "get_sample_data" %}')
+            .done(function(response) {
+                $('input[name="batch_name"]').val(response.batch_name);
+                $('input[name="batch_id"]').val(response.batch_id);
+                $('input[name="login_name"]').val(response.login_name);
+                showNotification('Sample data filled successfully!', 'success');
+            })
+            .fail(function() {
+                showNotification('Failed to load sample data', 'error');
+            })
+            .always(function() {
+                $('#fill-sample-button').prop('disabled', false).html('<i class="fas fa-magic me-1"></i>Sample Data');
             });
         });
 

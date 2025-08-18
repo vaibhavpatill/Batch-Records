@@ -112,6 +112,22 @@ def generate_ssrs_report(request):
             return JsonResponse({'status': 'error', 'message': 'Batch ID is required'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
+def get_sample_data(request):
+    if request.method == 'GET':
+        sample_names = ['PCB-2024-001', 'ELEC-2024-002', 'CHIP-2024-003', 'BOARD-2024-004', 'COMP-2024-005']
+        sample_operators = ['John Smith', 'Sarah Johnson', 'Mike Wilson', 'Lisa Brown', 'David Lee']
+        
+        batch_name = random.choice(sample_names)
+        batch_id = f"B{random.randint(1000, 9999)}"
+        login_name = random.choice(sample_operators)
+        
+        return JsonResponse({
+            'batch_name': batch_name,
+            'batch_id': batch_id,
+            'login_name': login_name
+        })
+    return JsonResponse({'error': 'Invalid request method'})
+
 
 
 

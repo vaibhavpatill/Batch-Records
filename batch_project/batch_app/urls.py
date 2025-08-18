@@ -7,4 +7,5 @@ urlpatterns = [
     path('get_random_values/', views.get_random_values, name='get_random_values'),
     path('get_batch_data/', views.get_batch_data, name='get_batch_data'),
     path('generate_ssrs_report/', views.generate_ssrs_report, name='generate_ssrs_report'),
+    path('get_sample_data/', views.get_sample_data, name='get_sample_data'),
 ]
